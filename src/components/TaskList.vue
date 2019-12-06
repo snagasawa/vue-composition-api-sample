@@ -1,50 +1,41 @@
 <template>
   <div>
     <div>
-      <input type="text" v-model="taskNameRef" />
-      <button @click="addTask">Add</button>
+      <add-task :addTask="addTask"></add-task>
     </div>
     <div>
       <input type="text" v-model="searchTextRef" />Search
     </div>
     <div class="task-list-wrapper">
-      <ul>
-        <h4>DOING</h4>
-        <li v-for="(task, index) in doingTasks" :key="index">
-          <input type="checkbox" :checked="task.status" disabled/>
-          <label>{{ task.name }}</label>
-          <button @click="toggleTask(task, true)">toggle</button>
-        </li>
-      </ul>
-      <ul>
-        <h4>COMPLETED</h4>
-        <li v-for="(task, index) in completedTasks" :key="index">
-          <input type="checkbox" :checked="task.status" disabled/>
-          <label>{{ task.name }}</label>
-          <button @click="toggleTask(task, false)">toggle</button>
-        </li>
-      </ul>
+      <task-row title="DOING" :tasks="doingTasks" :toggleTask="toggleTask"></task-row>
+      <task-row title="COMPLETED" :tasks="completedTasks" :toggleTask="toggleTask"></task-row>
     </div>
   </div>  
 </template>
 
 <script>
+import TaskRow from '../components/TaskRow'
+import AddTask from '../components/AddTask'
+
 import useFilter from '../composables/use-filter';
 import useSearcher from '../composables/use-searcher';
 import useAddingTask from '../composables/use-adding-task';
 import useTaskList from '../composables/use-task-list';
 
 export default {
+  components: {
+    TaskRow,
+    AddTask,
+  },
   setup() {
     const { tasksRef, toggleTask } = useTaskList();
-    const { taskNameRef, addTask } = useAddingTask(tasksRef);
-    const { searchTextRef, search } = useSearcher(tasksRef.value);
+    const { addTask } = useAddingTask(tasksRef);
+    const { searchTextRef, search } = useSearcher(tasksRef);
     const { doingTasks, completedTasks } = useFilter(search); 
 
     return {
       // Mutable state
       tasksRef,
-      taskNameRef,
       searchTextRef,
       // Functions
       addTask,
