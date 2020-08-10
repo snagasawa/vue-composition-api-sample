@@ -28,6 +28,7 @@
 
 <script lang="ts">
 import Vue from 'vue';
+import { defineComponent, reactive, toRefs } from '@vue/composition-api';
 import { Task } from '../types';
 
 interface Data {
@@ -36,12 +37,16 @@ interface Data {
   tasks: Task[];
 }
 
-export default Vue.extend({
-  data: (): Data => {
-    return {
+export default defineComponent({
+  setup() {
+    const state = reactive<Data>({
       taskName: '',
       searchText: '',
       tasks: [],
+    });
+
+    return {
+      ...toRefs(state),
     };
   },
   computed: {
