@@ -45,8 +45,23 @@ export default defineComponent({
       tasks: [],
     });
 
+    const addTask = () => {
+      state.tasks.push({
+        name: state.taskName,
+        status: false,
+      });
+      state.taskName = '';
+    };
+
+    const toggleTask = (task: Task, status: boolean) => {
+      const index = state.tasks.indexOf(task);
+      state.tasks.splice(index, 1, { ...task, status: status });
+    };
+
     return {
       ...toRefs(state),
+      addTask,
+      toggleTask,
     };
   },
   computed: {
@@ -58,19 +73,6 @@ export default defineComponent({
     },
     searchedTasks(): Task[] {
       return this.tasks.filter(t => t.name.includes(this.searchText));
-    },
-  },
-  methods: {
-    addTask() {
-      this.tasks.push({
-        name: this.taskName,
-        status: false,
-      });
-      this.taskName = '';
-    },
-    toggleTask(task: Task, status: boolean) {
-      const index = this.tasks.indexOf(task);
-      this.tasks.splice(index, 1, { ...task, status: status });
     },
   },
 });
