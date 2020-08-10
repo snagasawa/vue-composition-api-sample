@@ -4,16 +4,16 @@
   </div>
 </template>
 
-<script>
-// import HelloWorld from './components/HelloWorld.vue'
-import TaskList from './components/TaskList.vue'
+<script lang="ts">
+import Vue from 'vue';
+import TaskList from './components/TaskList.vue';
 
-export default {
-  name: 'app',
+export default Vue.extend({
+  name: 'App',
   components: {
-    TaskList    
-  }
-}
+    TaskList,
+  },
+});
 </script>
 
 <style>

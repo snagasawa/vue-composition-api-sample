@@ -1,21 +1,27 @@
 <template>
   <div>
     <div>
-      <add-task :addTask="addTask"></add-task>
+      <add-task :add-task="addTask"></add-task>
     </div>
-    <div>
-      <input type="text" v-model="searchTextRef" />Search
-    </div>
+    <div><input v-model="searchTextRef" type="text" />Search</div>
     <div class="task-list-wrapper">
-      <task-row title="DOING" :tasks="doingTasks" :toggleTask="toggleTask"></task-row>
-      <task-row title="COMPLETED" :tasks="completedTasks" :toggleTask="toggleTask"></task-row>
+      <task-row
+        title="DOING"
+        :tasks="doingTasks"
+        :toggle-task="toggleTask"
+      ></task-row>
+      <task-row
+        title="COMPLETED"
+        :tasks="completedTasks"
+        :toggle-task="toggleTask"
+      ></task-row>
     </div>
-  </div>  
+  </div>
 </template>
 
 <script>
-import TaskRow from '../components/TaskRow'
-import AddTask from '../components/AddTask'
+import TaskRow from '../components/TaskRow';
+import AddTask from '../components/AddTask';
 
 import useFilter from '../composables/use-filter';
 import useSearcher from '../composables/use-searcher';
@@ -31,7 +37,7 @@ export default {
     const { tasksRef, toggleTask } = useTaskList();
     const { addTask } = useAddingTask(tasksRef);
     const { searchTextRef, search } = useSearcher(tasksRef);
-    const { doingTasks, completedTasks } = useFilter(search); 
+    const { doingTasks, completedTasks } = useFilter(search);
 
     return {
       // Mutable state
@@ -43,9 +49,9 @@ export default {
       // Computed
       doingTasks,
       completedTasks,
-    }
-  }
-}
+    };
+  },
+};
 </script>
 <style scoped>
 .task-list-wrapper {
