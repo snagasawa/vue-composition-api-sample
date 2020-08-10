@@ -11,5 +11,5 @@ export default function useTaskList() {
   return {
     tasksRef,
     toggleTask,
-  }; 
+  };
 }
