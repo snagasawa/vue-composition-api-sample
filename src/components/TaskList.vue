@@ -52,20 +52,30 @@ export default defineComponent({
       tasks: [],
     });
 
-    const searchedTasks = ((tasks, text) =>
+    const filterTasksByName = (
+      tasks: ComputedRef<Task[]>,
+      text: ComputedRef<string>
+    ) =>
       computed(() => {
         return tasks.value.filter(t => t.name.includes(text.value));
-      }))(toRef(state, 'tasks'), toRef(state, 'searchText'));
+      });
 
-    const doingTasks = (tasks =>
+    const filterDoingTasks = (tasks: ComputedRef<Task[]>) =>
       computed(() => {
         return tasks.value.filter(t => !t.status);
-      }))(searchedTasks);
+      });
 
-    const completedTasks = (tasks =>
+    const filterComputedTasks = (tasks: ComputedRef<Task[]>) =>
       computed(() => {
         return tasks.value.filter(t => t.status);
-      }))(searchedTasks);
+      });
+
+    const searchedTasks = filterTasksByName(
+      toRef(state, 'tasks'),
+      toRef(state, 'searchText')
+    );
+    const doingTasks = filterDoingTasks(searchedTasks);
+    const completedTasks = filterComputedTasks(searchedTasks);
 
     const addTask = () => {
       state.tasks.push({
