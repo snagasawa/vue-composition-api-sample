@@ -1,104 +1,57 @@
 <template>
   <div>
     <div>
-      <input v-model="taskName" type="text" />
-      <button @click="addTask">Add</button>
+      <add-task :add-task="addTask"></add-task>
     </div>
-    <div><input v-model="searchText" type="text" />Search</div>
+    <div><input v-model="searchTextRef" type="text" />Search</div>
     <div class="task-list-wrapper">
-      <ul>
-        <h4>DOING</h4>
-        <li v-for="(task, index) in doingTasks" :key="index">
-          <input type="checkbox" :checked="task.status" disabled />
-          <label>{{ task.name }}</label>
-          <button @click="toggleTask(task, true)">toggle</button>
-        </li>
-      </ul>
-      <ul>
-        <h4>COMPLETED</h4>
-        <li v-for="(task, index) in completedTasks" :key="index">
-          <input type="checkbox" :checked="task.status" disabled />
-          <label>{{ task.name }}</label>
-          <button @click="toggleTask(task, false)">toggle</button>
-        </li>
-      </ul>
+      <task-row
+        title="DOING"
+        :tasks="doingTasks"
+        :toggle-task="toggleTask"
+      ></task-row>
+      <task-row
+        title="COMPLETED"
+        :tasks="completedTasks"
+        :toggle-task="toggleTask"
+      ></task-row>
     </div>
   </div>
 </template>
 
-<script lang="ts">
-import Vue from 'vue';
-import {
-  defineComponent,
-  reactive,
-  toRefs,
-  computed,
-  ComputedRef,
-  toRef,
-} from '@vue/composition-api';
-import { Task } from '../types';
+<script>
+import TaskRow from '../components/TaskRow';
+import AddTask from '../components/AddTask';
 
-interface Data {
-  taskName: string;
-  searchText: string;
-  tasks: Task[];
-}
+import useFilter from '../composables/use-filter';
+import useSearcher from '../composables/use-searcher';
+import useAddingTask from '../composables/use-adding-task';
+import useTaskList from '../composables/use-task-list';
 
-export default defineComponent({
+export default {
+  components: {
+    TaskRow,
+    AddTask,
+  },
   setup() {
-    const state = reactive<Data>({
-      taskName: '',
-      searchText: '',
-      tasks: [],
-    });
-
-    const filterTasksByName = (
-      tasks: ComputedRef<Task[]>,
-      text: ComputedRef<string>
-    ) =>
-      computed(() => {
-        return tasks.value.filter(t => t.name.includes(text.value));
-      });
-
-    const filterDoingTasks = (tasks: ComputedRef<Task[]>) =>
-      computed(() => {
-        return tasks.value.filter(t => !t.status);
-      });
-
-    const filterComputedTasks = (tasks: ComputedRef<Task[]>) =>
-      computed(() => {
-        return tasks.value.filter(t => t.status);
-      });
-
-    const searchedTasks = filterTasksByName(
-      toRef(state, 'tasks'),
-      toRef(state, 'searchText')
-    );
-    const doingTasks = filterDoingTasks(searchedTasks);
-    const completedTasks = filterComputedTasks(searchedTasks);
-
-    const addTask = () => {
-      state.tasks.push({
-        name: state.taskName,
-        status: false,
-      });
-      state.taskName = '';
-    };
-
-    const toggleTask = (task: Task, status: boolean) => {
-      const index = state.tasks.indexOf(task);
-      state.tasks.splice(index, 1, { ...task, status: status });
-    };
+    const { tasksRef, toggleTask } = useTaskList();
+    const { addTask } = useAddingTask(tasksRef);
+    const { searchTextRef, search } = useSearcher(tasksRef);
+    const { doingTasks, completedTasks } = useFilter(search);
 
     return {
-      ...toRefs(state),
+      // Mutable state
+      tasksRef,
+      searchTextRef,
+      // Functions
       addTask,
       toggleTask,
+      // Computed
       doingTasks,
       completedTasks,
     };
   },
-});
+};
 </script>
 <style scoped>
 .task-list-wrapper {
