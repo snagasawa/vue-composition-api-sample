@@ -1,19 +1,20 @@
 <template>
   <div id="app">
-    <task-list></task-list>
+    <img alt="Vue logo" src="./assets/logo.png">
+    <HelloWorld msg="Welcome to Your Vue.js + TypeScript App"/>
   </div>
 </template>
 
-<script>
-// import HelloWorld from './components/HelloWorld.vue'
-import TaskList from './components/TaskList.vue'
+<script lang="ts">
+import Vue from 'vue';
+import HelloWorld from './components/HelloWorld.vue';
 
-export default {
-  name: 'app',
+export default Vue.extend({
+  name: 'App',
   components: {
-    TaskList    
+    HelloWorld
   }
-}
+});
 </script>
 
 <style>
