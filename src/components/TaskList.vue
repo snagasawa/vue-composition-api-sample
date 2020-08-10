@@ -28,7 +28,14 @@
 
 <script lang="ts">
 import Vue from 'vue';
-import { defineComponent, reactive, toRefs } from '@vue/composition-api';
+import {
+  defineComponent,
+  reactive,
+  toRefs,
+  computed,
+  ComputedRef,
+  toRef,
+} from '@vue/composition-api';
 import { Task } from '../types';
 
 interface Data {
@@ -44,6 +51,21 @@ export default defineComponent({
       searchText: '',
       tasks: [],
     });
+
+    const searchedTasks = ((tasks, text) =>
+      computed(() => {
+        return tasks.value.filter(t => t.name.includes(text.value));
+      }))(toRef(state, 'tasks'), toRef(state, 'searchText'));
+
+    const doingTasks = (tasks =>
+      computed(() => {
+        return tasks.value.filter(t => !t.status);
+      }))(searchedTasks);
+
+    const completedTasks = (tasks =>
+      computed(() => {
+        return tasks.value.filter(t => t.status);
+      }))(searchedTasks);
 
     const addTask = () => {
       state.tasks.push({
@@ -62,18 +84,9 @@ export default defineComponent({
       ...toRefs(state),
       addTask,
       toggleTask,
+      doingTasks,
+      completedTasks,
     };
-  },
-  computed: {
-    doingTasks(): Task[] {
-      return this.searchedTasks.filter(t => !t.status);
-    },
-    completedTasks(): Task[] {
-      return this.searchedTasks.filter(t => t.status);
-    },
-    searchedTasks(): Task[] {
-      return this.tasks.filter(t => t.name.includes(this.searchText));
-    },
   },
 });
 </script>
