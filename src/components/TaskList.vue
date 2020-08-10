@@ -1,67 +1,74 @@
 <template>
   <div>
     <div>
-      <input type="text" v-model="state.taskName" />
+      <input v-model="taskName" type="text" />
       <button @click="addTask">Add</button>
     </div>
-    <div>
-      <input type="text" v-model="state.searchText" />Search
-    </div>
+    <div><input v-model="searchText" type="text" />Search</div>
     <div class="task-list-wrapper">
       <ul>
         <h4>DOING</h4>
-        <li v-for="(task, index) in state.doingTasks" :key="index">
-          <input type="checkbox" :checked="task.status" disabled/>
+        <li v-for="(task, index) in doingTasks" :key="index">
+          <input type="checkbox" :checked="task.status" disabled />
           <label>{{ task.name }}</label>
           <button @click="toggleTask(task, true)">toggle</button>
         </li>
       </ul>
       <ul>
         <h4>COMPLETED</h4>
-        <li v-for="(task, index) in state.completedTasks" :key="index">
-          <input type="checkbox" :checked="task.status" disabled/>
+        <li v-for="(task, index) in completedTasks" :key="index">
+          <input type="checkbox" :checked="task.status" disabled />
           <label>{{ task.name }}</label>
           <button @click="toggleTask(task, false)">toggle</button>
         </li>
       </ul>
     </div>
-  </div>  
+  </div>
 </template>
 
-<script>
-import { reactive, computed } from '@vue/composition-api';
+<script lang="ts">
+import Vue from 'vue';
+import { Task } from '../types';
 
-export default {
-  setup() {
-    const state = reactive({
+interface Data {
+  taskName: string;
+  searchText: string;
+  tasks: Task[];
+}
+
+export default Vue.extend({
+  data: (): Data => {
+    return {
       taskName: '',
       searchText: '',
       tasks: [],
-      doingTasks: computed(() => state.searchedTasks.filter(t => !t.status)),
-      completedTasks: computed(() => state.searchedTasks.filter(t => t.status)),
-      searchedTasks: computed(() => state.tasks.filter(t => t.name.includes(state.searchText))),
-    });
-
-    function addTask() {
-      state.tasks.push({
-        name: state.taskName,
+    };
+  },
+  computed: {
+    doingTasks(): Task[] {
+      return this.searchedTasks.filter(t => !t.status);
+    },
+    completedTasks(): Task[] {
+      return this.searchedTasks.filter(t => t.status);
+    },
+    searchedTasks(): Task[] {
+      return this.tasks.filter(t => t.name.includes(this.searchText));
+    },
+  },
+  methods: {
+    addTask() {
+      this.tasks.push({
+        name: this.taskName,
         status: false,
       });
-      state.taskName = '';
-    }
-
-    function toggleTask(task, status) {
-      const index = state.tasks.indexOf(task);
-      state.tasks.splice(index, 1, { ...task, status: status });
-    }
-
-    return {
-      state,
-      addTask,
-      toggleTask
-    }
-  }
-}
+      this.taskName = '';
+    },
+    toggleTask(task: Task, status: boolean) {
+      const index = this.tasks.indexOf(task);
+      this.tasks.splice(index, 1, { ...task, status: status });
+    },
+  },
+});
 </script>
 <style scoped>
 .task-list-wrapper {
