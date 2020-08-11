@@ -1,34 +1,36 @@
 <template>
   <div>
     <div>
-      <add-task :add-task="addTask"></add-task>
+      <add-task @add-task="addTask"></add-task>
     </div>
     <div><input v-model="searchTextRef" type="text" />Search</div>
     <div class="task-list-wrapper">
       <task-row
         title="DOING"
         :tasks="doingTasks"
-        :toggle-task="toggleTask"
+        @toggle-task="toggleTask"
       ></task-row>
       <task-row
         title="COMPLETED"
         :tasks="completedTasks"
-        :toggle-task="toggleTask"
+        @toggle-task="toggleTask"
       ></task-row>
     </div>
   </div>
 </template>
 
-<script>
-import TaskRow from '../components/TaskRow';
-import AddTask from '../components/AddTask';
+<script lang="ts">
+import { defineComponent } from '@vue/composition-api';
 
-import useFilter from '../composables/use-filter';
-import useSearcher from '../composables/use-searcher';
-import useAddingTask from '../composables/use-adding-task';
-import useTaskList from '../composables/use-task-list';
+import TaskRow from '@/components/TaskRow.vue';
+import AddTask from '@/components/AddTask.vue';
 
-export default {
+import useFilter from '@/composables/use-filter';
+import useSearcher from '@/composables/use-searcher';
+import useAddingTask from '@/composables/use-adding-task';
+import useTaskList from '@/composables/use-task-list';
+
+export default defineComponent({
   components: {
     TaskRow,
     AddTask,
@@ -51,7 +53,7 @@ export default {
       completedTasks,
     };
   },
-};
+});
 </script>
 <style scoped>
 .task-list-wrapper {
