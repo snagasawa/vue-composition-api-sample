@@ -1,24 +1,25 @@
 <template>
   <div>
-    <input type="text" v-model="taskNameRef" />
+    <input v-model="taskNameRef" type="text" />
     <button @click="addTask(taskNameRef)">Add</button>
   </div>
 </template>
-<script>
-import { ref } from '@vue/composition-api';
+<script lang="ts">
+import { ref, defineComponent, Ref } from '@vue/composition-api';
 
-export default {
-  props: {
-    addTask: Function,
-  },
-  setup() {
+export default defineComponent({
+  setup(_props, context) {
     const taskNameRef = ref('');
+
+    const addTask = (taskName: string) => {
+      context.emit('add-task', taskName);
+    };
 
     return {
       taskNameRef,
+      addTask,
     };
-  }
-}
+  },
+});
 </script>
-<style scoped>
-</style>
+<style scoped></style>

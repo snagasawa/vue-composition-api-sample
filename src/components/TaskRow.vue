@@ -2,20 +2,30 @@
   <ul>
     <h4>{{ title }}</h4>
     <li v-for="(task, index) in tasks" :key="index">
-      <input type="checkbox" :checked="task.status" disabled/>
+      <input type="checkbox" :checked="task.status" disabled />
       <label>{{ task.name }}</label>
       <button @click="toggleTask(task, true)">toggle</button>
     </li>
   </ul>
 </template>
-<script>
-export default {
+<script lang="ts">
+import { defineComponent, toRefs } from '@vue/composition-api';
+import { Task } from '@/types';
+
+export default defineComponent({
   props: {
-    title: String,
-    tasks: Array,
-    toggleTask: Function,
-  }
-}
+    title: { type: String, required: true },
+    tasks: { type: Array as () => Task[], required: true },
+  },
+  setup(props, context) {
+    const toggleTask = (task: Task, status: boolean) => {
+      context.emit('toggle-task', task, status);
+    };
+
+    return {
+      toggleTask,
+    };
+  },
+});
 </script>
-<style scoped>
-</style>
+<style scoped></style>
