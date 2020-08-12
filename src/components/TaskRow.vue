@@ -4,7 +4,7 @@
     <li v-for="(task, index) in tasks" :key="index">
       <input type="checkbox" :checked="task.status" disabled />
       <label>{{ task.name }}</label>
-      <button @click="toggleTask(task, true)">toggle</button>
+      <button @click="toggleTask(task)">toggle</button>
     </li>
   </ul>
 </template>
@@ -18,8 +18,8 @@ export default defineComponent({
     tasks: { type: Array as () => Task[], required: true },
   },
   setup(props, context) {
-    const toggleTask = (task: Task, status: boolean) => {
-      context.emit('toggle-task', task, status);
+    const toggleTask = (task: Task) => {
+      context.emit('toggle-task', task);
     };
 
     return {

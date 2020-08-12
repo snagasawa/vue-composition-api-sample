@@ -8,12 +8,12 @@
       <task-row
         title="DOING"
         :tasks="doingTasks"
-        @toggle-task="toggleTask"
+        @toggle-task="completeTask"
       ></task-row>
       <task-row
         title="COMPLETED"
         :tasks="completedTasks"
-        @toggle-task="toggleTask"
+        @toggle-task="returnToDoingTask"
       ></task-row>
     </div>
   </div>
@@ -41,13 +41,21 @@ export default defineComponent({
     const { searchTextRef, search } = useSearcher(tasksRef);
     const { doingTasks, completedTasks } = useFilter(search);
 
+    const completeTask = toggleTask(() => {
+      return true;
+    });
+    const returnToDoingTask = toggleTask(() => {
+      return false;
+    });
+
     return {
       // Mutable state
       tasksRef,
       searchTextRef,
       // Functions
       addTask,
-      toggleTask,
+      completeTask,
+      returnToDoingTask,
       // Computed
       doingTasks,
       completedTasks,
