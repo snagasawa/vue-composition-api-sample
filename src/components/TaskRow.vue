@@ -9,13 +9,13 @@
   </ul>
 </template>
 <script lang="ts">
-import { defineComponent, toRefs } from '@vue/composition-api';
+import { defineComponent, toRefs, PropType } from '@vue/composition-api';
 import { Task } from '@/types';
 
 export default defineComponent({
   props: {
     title: { type: String, required: true },
-    tasks: { type: Array as () => Task[], required: true },
+    tasks: { type: Array as PropType<Task[]>, required: true },
   },
   setup(props, context) {
     const toggleTask = (task: Task) => {
